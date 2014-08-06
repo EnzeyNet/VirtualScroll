@@ -15,8 +15,8 @@
 				var preSpacer = angular.element('<' + $element[0].tagName + '></' + $element[0].tagName + '>');
 				var postSpacer = preSpacer.clone();
 
-				$element.parent().prepend(preSpacer);
-				$element.parent().append(postSpacer);
+				$($element).before(preSpacer);
+				$element.after(postSpacer);
 
 				var tableSeperateBorderOffset = 0;
 				var findScrollElem = function(elem) {
