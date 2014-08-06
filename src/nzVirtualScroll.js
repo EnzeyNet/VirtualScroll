@@ -39,7 +39,7 @@
 					var preElementCount = Math.floor(scrollElement[0].scrollTop / elemSize);
 					var preElementCount = Math.max(0, preElementCount - buffer);
 
-					var maxVisibleRows = Math.floor(height / size) + (buffer * 2);
+					var maxVisibleRows = 1 + Math.ceil(height / size) + (buffer * 2);
 					var avalVisibleRows = Math.min(maxVisibleRows, newArray.length);
 
 					var postElementCount = Math.max(0, newArray.length - avalVisibleRows - preElementCount);
@@ -73,7 +73,7 @@
 								$parse(vsArrayName).assign(scope, [newArray[0]]);
 								$timeout(function() {
 									var singleRow = $(element.parent().children()[1]);
-									elemSize = singleRow.height();
+									elemSize = singleRow.height() +2;
 
 									$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
 								}, 0, true);
