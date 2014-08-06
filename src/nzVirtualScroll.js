@@ -23,7 +23,7 @@
 
 					// jqLite ONLY returns inline styles, thus jQuery is needed
 					elem = $(elem);
-					var overflowVal = elem.css('overflow-x');
+					var overflowVal = elem.css('overflow-y');
 					if (overflowVal === 'scroll' || overflowVal === 'auto') {
 						return elem;
 					} else{
