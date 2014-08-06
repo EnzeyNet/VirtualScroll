@@ -7,7 +7,7 @@
         return {
 			priority: 999999,
 			compile: function ($element, $attrs) {
-				var ngRepeatScopeVar = / in (.+?)\b/.exec($attrs.ngRepeat)[1];
+				var ngRepeatScopeVar = / in (.+?)(?: |$)/.exec($attrs.ngRepeat)[1];
 				var vsArrayName = 'vs' + ngRepeatScopeVar[0].toUpperCase() + ngRepeatScopeVar.slice(1);
 				$attrs.ngRepeat = $attrs.ngRepeat.replace(" in " + ngRepeatScopeVar, ' in ' + vsArrayName);
 				//$element.attr($attrs.$attr.ngRepeat, $attrs.ngRepeat.replace(" in " + ngRepeatScopeVar, ' in ' + vsArrayName));
@@ -18,11 +18,15 @@
 				$element.parent().prepend(preSpacer);
 				$element.parent().append(postSpacer);
 
+				var tableSeperateBorderOffset = 0;
 				var findScrollElem = function(elem) {
 					if (!elem[0] || elem[0] === $document[0]) {throw 'could not find a parent element with scrolling overflow!';}
 
 					// jqLite ONLY returns inline styles, thus jQuery is needed
 					elem = $(elem);
+					if (elem[0].tagName.toLowerCase() === 'table' && elem.css('border-collapse') !== 'collapse') {
+						tableSeperateBorderOffset = 2;
+					}
 					var overflowVal = elem.css('overflow-y');
 					if (overflowVal === 'scroll' || overflowVal === 'auto') {
 						return elem;
@@ -73,7 +77,7 @@
 								$parse(vsArrayName).assign(scope, [newArray[0]]);
 								$timeout(function() {
 									var singleRow = $(element.parent().children()[1]);
-									elemSize = singleRow.height() +2;
+									elemSize = singleRow.height() + tableSeperateBorderOffset;
 
 									$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
 								}, 0, true);
