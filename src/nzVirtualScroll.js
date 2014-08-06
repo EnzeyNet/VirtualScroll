@@ -11,6 +11,7 @@
 				var vsArrayName = 'vs' + ngRepeatScopeVar[0].toUpperCase() + ngRepeatScopeVar.slice(1);
 				$attrs.ngRepeat = $attrs.ngRepeat.replace(" in " + ngRepeatScopeVar, ' in ' + vsArrayName);
 				//$element.attr($attrs.$attr.ngRepeat, $attrs.ngRepeat.replace(" in " + ngRepeatScopeVar, ' in ' + vsArrayName));
+
 				var preSpacer = angular.element('<' + $element[0].tagName + '></' + $element[0].tagName + '>');
 				var postSpacer = preSpacer.clone();
 
@@ -29,17 +30,18 @@
 						return findScrollElem(elem.parent());
 					}
 				};
+				var buffer = 2;
 				var elemSize;
 				var scrollElement = findScrollElem($element.parent());
 				var getVisibleRows = function(newArray, size) {
 					var height = scrollElement[0].clientHeight;
 
 					var preElementCount = Math.floor(scrollElement[0].scrollTop / elemSize);
+					var preElementCount = Math.max(0, preElementCount - buffer);
 					preSpacer.css('height', preElementCount * elemSize);
 
-					var maxVisibleRows = Math.floor(height / size);
+					var maxVisibleRows = Math.floor(height / size) + (buffer * 2);
 					var avalVisibleRows = Math.min(maxVisibleRows, newArray.length);
-					avalVisibleRows;
 
 					var postElementCount = Math.max(0, newArray.length - avalVisibleRows - preElementCount);
 					postSpacer.css('height', postElementCount * elemSize);
@@ -54,6 +56,12 @@
 
 				return {
 					pre: function (scope, element, attrs) {
+						if (angular.isDefined($attrs.nzVsBuffer)) {
+							var userBuffer = +$parse($attrs.nzVsBuffer)(scope);
+							if (!isNaN(userBuffer)) {
+								buffer = Math.max(0, userBuffer);
+							}
+						}
 						scope.$watchCollection(ngRepeatScopeVar, function(newArray, oldArray) {
 							if (!elemSize) {
 								$parse(vsArrayName).assign(scope, [newArray[0]]);
@@ -61,7 +69,6 @@
 									var singleRow = $(element.parent().children()[1]);
 									elemSize = singleRow.height();
 
-									
 									$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
 								}, 0, true);
 							} else {
