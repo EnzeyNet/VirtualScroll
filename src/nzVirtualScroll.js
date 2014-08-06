@@ -38,16 +38,22 @@
 
 					var preElementCount = Math.floor(scrollElement[0].scrollTop / elemSize);
 					var preElementCount = Math.max(0, preElementCount - buffer);
-					preSpacer.css('height', preElementCount * elemSize);
 
 					var maxVisibleRows = Math.floor(height / size) + (buffer * 2);
 					var avalVisibleRows = Math.min(maxVisibleRows, newArray.length);
 
 					var postElementCount = Math.max(0, newArray.length - avalVisibleRows - preElementCount);
+
+					var lowerEndBufferOffset = 0;
+					if (postElementCount <= buffer) {
+						lowerEndBufferOffset = buffer - postElementCount;
+						preElementCount = Math.max(0, newArray.length - avalVisibleRows - buffer);
+					}
 					postSpacer.css('height', postElementCount * elemSize);
+					preSpacer.css('height', preElementCount * elemSize);
 
 					var visible = [];
-					for (var i = preElementCount; i < preElementCount + avalVisibleRows; i++) {
+					for (var i = preElementCount; i < preElementCount + avalVisibleRows + lowerEndBufferOffset; i++) {
 						visible.push(newArray[i]);
 					}
 
