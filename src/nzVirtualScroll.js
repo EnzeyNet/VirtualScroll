@@ -42,8 +42,12 @@
 
 					var preElementCount = Math.floor(scrollElement[0].scrollTop / elemSize);
 					var preElementCount = Math.max(0, preElementCount - buffer);
+					var maxVisibleRows = Math.ceil(height / size);
 
-					var maxVisibleRows = 1 + Math.ceil(height / size) + (buffer * 2);
+					var rowStripingOffset = preElementCount % 2;
+					preElementCount -= rowStripingOffset;
+					maxVisibleRows += rowStripingOffset;
+
 					var avalVisibleRows = Math.min(maxVisibleRows, newArray.length);
 
 					var postElementCount = Math.max(0, newArray.length - avalVisibleRows - preElementCount);
