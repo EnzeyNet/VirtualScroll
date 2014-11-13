@@ -1,0 +1,23 @@
+{
+	"name": "VirtualScroll",
+	"description": "Angular Virtual Scroll Directive",
+	"version": "0.0.1",
+	"homepage": "https://github.com/EnzeyNet/VirtualScroll",
+	"bugs": "https://github.com/EnzeyNet/VirtualScroll/issues",
+	"author": {
+		"name": "Joseph Aspelund",
+		"email": "enzey@enzey.net",
+		"url": "https://github.com/Xanir"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/EnzeyNet/VirtualScroll.git"
+	},
+	"keywords": [
+		"angular"
+	],
+	"dependencies": {
+		"angular": "1.2.x",
+		"angular-mocks": "~1.2.x"
+	}
+}

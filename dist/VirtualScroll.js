@@ -3,7 +3,7 @@
 
     var directives = angular.module('net.enzey.virtual-scroll', []);
 
-    directives.directive('nzVs', function ($parse, $document, $timeout) {
+    directives.directive('nzVs', ['$parse', '$document', '$timeout', function ($parse, $document, $timeout) {
         return {
 			priority: 999999,
 			require: 'ngRepeat',
@@ -103,6 +103,6 @@
 				}
 			}
         };
-    });
+    }]);
 
 })(angular, jQuery);
