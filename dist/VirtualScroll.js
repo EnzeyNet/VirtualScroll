@@ -1,13 +1,14 @@
-(function (angular, $) {
+(function (angular) {
     "use strict";
 
     var directives = angular.module('net.enzey.virtual-scroll', []);
 
-    directives.directive('nzVs', ['$parse', '$document', '$timeout', function ($parse, $document, $timeout) {
+    directives.directive('nzVs', ['$parse', '$window', '$document', '$timeout', function ($parse, $window, $document, $timeout) {
         return {
-			priority: 999999,
-			require: 'ngRepeat',
+			priority: 9000,
 			compile: function ($element, $attrs) {
+				if (!angular.isDefined($attrs.ngRepeat)) {throw "'nz-vs' directive requires 'ng-repeat' to be defined on the same element!"}
+
 				var ngRepeatScopeVar = / in (.+?)(?: |$)/.exec($attrs.ngRepeat)[1];
 				var vsArrayName = 'vs' + ngRepeatScopeVar[0].toUpperCase() + ngRepeatScopeVar.slice(1);
 				$attrs.ngRepeat = $attrs.ngRepeat.replace(" in " + ngRepeatScopeVar, ' in ' + vsArrayName);
@@ -16,28 +17,27 @@
 				var preSpacer = angular.element('<' + $element[0].tagName + '></' + $element[0].tagName + '>');
 				var postSpacer = preSpacer.clone();
 
-				$($element).before(preSpacer);
+				$element[0].parentElement.insertBefore(preSpacer[0], $element[0])
 				$element.after(postSpacer);
 
 				var tableSeperateBorderOffset = 0;
 				var findScrollElem = function(elem) {
 					if (!elem[0] || elem[0] === $document[0]) {throw 'could not find a parent element with scrolling overflow!';}
 
-					// jqLite ONLY returns inline styles, thus jQuery is needed
-					elem = $(elem);
-					if (elem[0].tagName.toLowerCase() === 'table' && elem.css('border-collapse') !== 'collapse') {
+					var compStyles = $window.getComputedStyle(elem);
+					if (elem[0].tagName.toLowerCase() === 'table' && compStyles.getPropertyValue('border-collapse') !== 'collapse') {
 						tableSeperateBorderOffset = 2;
 					}
-					var overflowVal = elem.css('overflow-y');
+					var overflowVal = compStyles.getPropertyValue('overflow-y');
 					if (overflowVal === 'scroll' || overflowVal === 'auto') {
 						return elem;
 					} else{
-						return findScrollElem(elem.parent());
+						return findScrollElem(elem.parentElement);
 					}
 				};
 				var buffer = 2;
 				var elemSize;
-				var scrollElement = findScrollElem($element.parent());
+				var scrollElement = findScrollElem($element[0].parentElement);
 				var getVisibleRows = function(newArray, size) {
 					var height = scrollElement[0].clientHeight;
 
@@ -78,16 +78,19 @@
 							}
 						}
 						scope.$watchCollection(ngRepeatScopeVar, function(newArray, oldArray) {
-							if (!elemSize) {
-								$parse(vsArrayName).assign(scope, [newArray[0]]);
-								$timeout(function() {
-									var singleRow = $(element.parent().children()[1]);
-									elemSize = singleRow.height() + tableSeperateBorderOffset;
+							if (newArray && newArray[0]) {
+								if (!elemSize) {
+									$parse(vsArrayName).assign(scope, [newArray[0]]);
+									$timeout(function() {
+										var singleRow = element.parentElement.children[1];
+										var rowHeight = element.getBoundingClientRect().height;
+										elemSize = rowHeight + tableSeperateBorderOffset;
 
+										$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
+									}, 0, true);
+								} else {
 									$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
-								}, 0, true);
-							} else {
-								$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
+								}
 							}
 						});
 					},
@@ -105,4 +108,4 @@
         };
     }]);
 
-})(angular, jQuery);
+})(angular);
