@@ -96,7 +96,7 @@
 					},
 					post:  function (scope, element, attrs) {
 						var updateVisible;
-						scrollElement.on('scroll', function() {
+						angular.element(scrollElement).on('scroll', function() {
 							$timeout.cancel(updateVisible);
 							updateVisible = $timeout(function() {
 								$parse(vsArrayName).assign(scope, getVisibleRows($parse(ngRepeatScopeVar)(scope), elemSize));
