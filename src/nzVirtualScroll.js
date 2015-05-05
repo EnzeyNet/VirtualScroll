@@ -39,9 +39,9 @@
 				var elemSize;
 				var scrollElement = findScrollElem($element[0].parentElement);
 				var getVisibleRows = function(newArray, size) {
-					var height = scrollElement[0].clientHeight;
+					var height = scrollElement.clientHeight;
 
-					var preElementCount = Math.floor(scrollElement[0].scrollTop / elemSize);
+					var preElementCount = Math.floor(scrollElement.scrollTop / elemSize);
 					var preElementCount = Math.max(0, preElementCount - buffer);
 					var maxVisibleRows = Math.ceil(height / size) + (2 * buffer);
 
@@ -82,8 +82,8 @@
 								if (!elemSize) {
 									$parse(vsArrayName).assign(scope, [newArray[0]]);
 									$timeout(function() {
-										var singleRow = element.parentElement.children[1];
-										var rowHeight = element.getBoundingClientRect().height;
+										var singleRow = element[0].parentElement.children[1];
+										var rowHeight = singleRow.getBoundingClientRect().height;
 										elemSize = rowHeight + tableSeperateBorderOffset;
 
 										$parse(vsArrayName).assign(scope, getVisibleRows(newArray, elemSize));
