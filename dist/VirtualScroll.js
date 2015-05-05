@@ -22,10 +22,10 @@
 
 				var tableSeperateBorderOffset = 0;
 				var findScrollElem = function(elem) {
-					if (!elem[0] || elem[0] === $document[0]) {throw 'could not find a parent element with scrolling overflow!';}
+					if (!elem || elem === $document[0]) {throw 'could not find a parent element with scrolling overflow!';}
 
 					var compStyles = $window.getComputedStyle(elem);
-					if (elem[0].tagName.toLowerCase() === 'table' && compStyles.getPropertyValue('border-collapse') !== 'collapse') {
+					if (elem.tagName.toLowerCase() === 'table' && compStyles.getPropertyValue('border-collapse') !== 'collapse') {
 						tableSeperateBorderOffset = 2;
 					}
 					var overflowVal = compStyles.getPropertyValue('overflow-y');
